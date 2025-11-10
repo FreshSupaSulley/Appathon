@@ -1,6 +1,8 @@
 # CUSTOM SHIT
-# crash logs
+TempAssembly.dll
+# Crash logs
 mono_crash*.json
+# Misc
 *_BackUpThisFolder_ButDontShipItWithYourGame/
 *_BurstDebugInformation_DoNotShip/
 .utmp/
