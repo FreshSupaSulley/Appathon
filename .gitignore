@@ -1,4 +1,5 @@
 # CUSTOM SHIT
+/Assets/_Recovery/
 TempAssembly.dll
 # Crash logs
 mono_crash*.json
