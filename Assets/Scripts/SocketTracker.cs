@@ -1,37 +1,55 @@
-//using UnityEngine;
+using UnityEngine;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 
-//public class SocketTracker : MonoBehaviour
-//{
-//    public UnityEngine.XR.Interaction.Toolkit.Interactors.XRSocketInteractor socket; // Drag your socket here
-//    public GameObject target;         // Drag the specific object to track here
+public class SocketTracker : MonoBehaviour
+{
+    public XRSocketInteractor socket;
+    public GameObject target;
+    //Receiver should be the gameobject witht he FNAK script
+    public FNAK receiver;
 
-//    private void OnEnable()
-//    {
-//        socket.onSelectEntered.AddListener(OnObjectAttached);
-//        socket.onSelectExited.AddListener(OnObjectDetached);
-//    }
+    private bool isAttached;
 
-//    private void OnDisable()
-//    {
-//        socket.onSelectEntered.RemoveListener(OnObjectAttached);
-//        socket.onSelectExited.RemoveListener(OnObjectDetached);
-//    }
+    private void Start()
+    {
+        isAttached = false;
+    }
 
-//    private void OnObjectAttached(UnityEngine.XR.Interaction.Toolkit.Interactables.XRBaseInteractable interactable)
-//    {
-//        if (interactable.gameObject == target)
-//        {
-//            Debug.Log($"{target.name} was attached!");
-//            // Add any additional behavior here
-//        }
-//    }
+    private void Update()
+    {
+        IXRSelectInteractable selected = socket.GetOldestInteractableSelected();
 
-//    private void OnObjectDetached(UnityEngine.XR.Interaction.Toolkit.Interactables.XRBaseInteractable interactable)
-//    {
-//        if (interactable.gameObject == target)
-//        {
-//            Debug.Log($"{target.name} was detached!");
-//        }
-//    }
-//}
+        isAttached = (selected.transform.gameObject == target);
+        Debug.Log("Target not attached");
+
+        if (isAttached)
+        {
+            afterAttach();
+            Debug.Log("Target attached");
+        } else
+        {
+            afterDettach();
+        }
+
+    }
+
+    private void afterAttach()
+    {
+        //Can add a way to alert the user like a sound or a UI elemeent
+        if (receiver != null)
+        {
+            receiver.SetAttached(true);
+        }
+
+    }
+
+    private void afterDettach()
+    {
+        if (receiver != null)
+        {
+            receiver.SetAttached(false);
+        }
+    }
+}

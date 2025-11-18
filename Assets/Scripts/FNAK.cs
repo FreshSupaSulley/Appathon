@@ -5,7 +5,11 @@ using UnityEngine.UI;
 using TMPro;
 
 public class FNAK : MonoBehaviour
+
 {
+    //Objects that need to be detected that are attached
+    private bool object1attached;
+
     public float totalSeconds = 30f;
     private float startTime;
     // long startTime = Time.time;
@@ -16,6 +20,7 @@ public class FNAK : MonoBehaviour
     void Start()
     {
         startTime = Time.time;
+        object1attached = false;
     }
 
     // Update is called once per frame
@@ -34,11 +39,18 @@ public class FNAK : MonoBehaviour
 
 
         countdownText.text = $"{minutes:00}:{seconds:00}";
-
-        if (remaining_time < 0)
+        //Will also need to check if all the objects are attached
+        if (remaining_time < 0 || object1attached)
         {
             //SceneManager.LoadScene("SceneName or Path")
         }
 
+
+
+    }
+
+    public void SetAttached(bool attached)
+    {
+        object1attached = attached;
     }
 }
