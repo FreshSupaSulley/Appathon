@@ -2,7 +2,7 @@
 /Assets/_Recovery/
 TempAssembly.dll
 # Crash logs
-mono_crash*.json
+mono_crash*.*
 # Misc
 *_BackUpThisFolder_ButDontShipItWithYourGame/
 *_BurstDebugInformation_DoNotShip/
