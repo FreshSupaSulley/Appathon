@@ -3,25 +3,28 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.Video;
 
-public class VideoWatcher : MonoBehaviour
+namespace Appathon
 {
-    public InputActionReference button;
-    public VideoPlayer player;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public class VideoWatcher : MonoBehaviour
     {
-        button.action.Enable();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        // Debug.Log($"Button A: {button.action.triggered}");
-        // Switch to main if the video stops playing or they press the skip button
-        if(player.time >= player.length || button.action.triggered)
+        public InputActionReference button;
+        public VideoPlayer player;
+        // Start is called once before the first execution of Update after the MonoBehaviour is created
+        void Start()
         {
-            Debug.Log($"Button A: {button.action.triggered}");
-            SceneManager.LoadScene("Main");
+            button.action.Enable();
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+            // Debug.Log($"Button A: {button.action.triggered}");
+            // Switch to main if the video stops playing or they press the skip button
+            if(player.time >= player.length || button.action.triggered)
+            {
+                Debug.Log($"Button A: {button.action.triggered}");
+                SceneManager.LoadScene("Main");
+            }
         }
     }
 }
