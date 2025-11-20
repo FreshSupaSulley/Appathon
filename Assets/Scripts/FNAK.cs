@@ -69,7 +69,7 @@ public class FNAK : MonoBehaviour
         countdownText.text = $"{minutes:00}:{seconds:00}";
 
         // Check if the time expired
-        if (remainingTime <= 0)
+        if (remainingTime <= 0 && CheckWinState() == false)
         {
             SceneManager.LoadScene("Lose");
         }
