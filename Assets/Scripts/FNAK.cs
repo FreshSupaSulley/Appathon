@@ -11,9 +11,13 @@ using System.Collections;
 
 public class FNAK : MonoBehaviour
 {
+    public AudioSource audioSource;
+    public AudioClip[] audioClips;
+
     // THE tasks parent that holds the Interactables and Drop Zones as 2 children
     // It's expected that this layout stays the same in the editor
     public GameObject tasksGameObject;
+    public GameObject[] decoyDropZones;
     // Appears in front of the Camera (statically)
     public TextMeshProUGUI todoText;
     // Array of things to clean / to do
@@ -26,6 +30,8 @@ public class FNAK : MonoBehaviour
     private float startTime;
     // long startTime = Time.time;
     public TMP_Text countdownText;
+
+    private int lastTask = -1;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -45,12 +51,25 @@ public class FNAK : MonoBehaviour
     {
         // Determine the current task and update the GUI text
         // This iteratively checks all tasks and finds the first one yet to be completed
-        for(int i = 0; i < dropZones.Count; i++)
+        for (int i = 0; i < dropZones.Count; i++)
         {
-            var socket = dropZones[i].GetComponent<XRSocketInteractor>();
+            bool socketHasSelection = dropZones[i].GetComponent<XRSocketInteractor>().hasSelection;
+            bool fakeSocketHasSelection = decoyDropZones[i]?.GetComponent<XRSocketInteractor>()?.hasSelection ?? false;
 
-            if(!socket.hasSelection)
+            // If this is the current task still left to do
+            // If the correct socket isn't filled AND the fake one isn't filled either
+            if (!socketHasSelection && !fakeSocketHasSelection)
             {
+                // If we just switched to it
+                if (i != lastTask)
+                {
+                    // In case it was still speaking, stop it
+                    audioSource.Stop();
+                    // Play the audio clip
+                    audioSource.PlayOneShot(audioClips[i]);
+                    lastTask = i;
+                }
+
                 // Update text
                 todoText.SetText(todoTexts[i]);
                 break;
@@ -79,28 +98,31 @@ public class FNAK : MonoBehaviour
     {
         List<GameObject> sockets = new();
         // Check if all drop zones are filled with something
-        foreach (GameObject sample in dropZones)
+        for (int i = 0; i < dropZones.Count; i++)
         {
-            var socket = sample.GetComponent<XRSocketInteractor>();
+            var real = dropZones[i].GetComponent<XRSocketInteractor>();
+            var fake = decoyDropZones[i]?.GetComponent<XRSocketInteractor>();
 
             // Abandon if all the sockets aren't filled yet
-            if (!socket.hasSelection)
+            if (!real.hasSelection && !(fake?.hasSelection ?? false))
                 return false;
 
-            sockets.Add(socket.GetOldestInteractableSelected().transform.gameObject);
+            // Null is picked up on below
+            sockets.Add(real.hasSelection ? real.GetOldestInteractableSelected().transform.gameObject : null);
         }
-
+        
         // Now check if they're filled with the correct object
         for (int i = 0; i < sockets.Count; i++)
         {
             var sample = sockets[i];
 
             // If the player fucked up which item goes where
-            if (!sample.name.Equals(interactables[i].name))
+            if (sample == null || !sample.name.Equals(interactables[i].name))
             {
                 // You lost. Skip to the timeout
                 // ... or we could just load the lose screen immediately
                 startTime = Time.time - totalSeconds;
+                return false;
             }
         }
 
